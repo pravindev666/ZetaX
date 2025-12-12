@@ -1,0 +1,46 @@
+name: Weekly Model Training
+
+on:
+  schedule:
+    # Every Saturday at 00:00 UTC (5:30 AM IST)
+    - cron: '0 0 * * 6'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('engine/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r engine/requirements.txt
+      
+      - name: Run Training Script
+        run: python engine/scripts/train_all_models.py
+        timeout-minutes: 30
+      
+      - name: Commit Trained Models
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add engine/models/*.pkl
+          git add engine/data/*.csv
+          git commit -m "chore: weekly model retraining [skip ci]" || echo "No changes to commit"
+          git push || echo "Push failed, may need conflict resolution"

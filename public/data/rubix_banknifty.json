@@ -1,0 +1,179 @@
+{
+  "generated_at": "2025-12-12T21:38:10.430263",
+  "indexName": "BANKNIFTY",
+  "timestamp": "21:38:10",
+  "hero": {
+    "verdictTitle": "BEARISH DIVERGENCE",
+    "verdictSubtitle": "TRENDING regime with 100% confidence",
+    "bullishProbability": 16,
+    "riskLevel": 80,
+    "riskVerdict": "Low Risk",
+    "kellySize": 5,
+    "kellyVerdict": "Conservative"
+  },
+  "tiles": {
+    "spotPrice": {
+      "id": "spot",
+      "label": "Current Level",
+      "value": 59389,
+      "change": 0.3,
+      "trend": "up",
+      "verdict": "Above prev close (0.30%)"
+    },
+    "indiaVix": {
+      "id": "vix",
+      "label": "Fear Gauge (VIX)",
+      "value": 10.1,
+      "change": -5.5,
+      "trend": "down",
+      "verdict": "LOW VIX - Safe to trade options"
+    },
+    "probabilitySurface": {
+      "id": "probs",
+      "label": "Option Skew",
+      "value": "Neutral",
+      "verdict": "Calls: 51%, Puts: 49%",
+      "meta": {
+        "call": 51,
+        "put": 48
+      }
+    },
+    "regimeBeacon": {
+      "id": "regime",
+      "label": "Market Regime",
+      "value": "TRENDING",
+      "verdict": "GO WITH TREND - momentum works",
+      "meta": {
+        "type": "trending",
+        "all_probs": {
+          "MEAN_REVERTING": 2.6517100581097175e-135,
+          "CHAOTIC": 3.421839731484843e-185,
+          "TRENDING": 1.0
+        }
+      }
+    },
+    "kellyOptimal": {
+      "id": "kelly",
+      "label": "Bet Size",
+      "value": "5%",
+      "verdict": "Use only 5% of your capital per trade"
+    },
+    "varGauge": {
+      "id": "var",
+      "label": "Max Daily Loss",
+      "value": "-1.2%",
+      "verdict": "NORMAL RISK - Proceed with trades"
+    },
+    "hurstCompass": {
+      "id": "hurst",
+      "label": "Trend Strength",
+      "value": 0.32,
+      "verdict": "Mean-reverting (contrarian works)"
+    },
+    "vixTerm": {
+      "id": "vixterm",
+      "label": "Volatility Term",
+      "value": "Contango",
+      "verdict": "SELL OPTIONS - Collect premium",
+      "history": [
+        {
+          "time": "Spot",
+          "value": 10.1
+        },
+        {
+          "time": "5d Avg",
+          "value": 10.7
+        },
+        {
+          "time": "20d Avg",
+          "value": 11.6
+        }
+      ]
+    },
+    "fridayFear": {
+      "id": "fear",
+      "label": "Weekend Risk",
+      "value": "LOW",
+      "verdict": "Low gap risk - weekend positions acceptable"
+    },
+    "thetaDecay": {
+      "id": "theta",
+      "label": "Time Decay",
+      "value": -40.0,
+      "unit": "pts/day",
+      "verdict": "SELL THETA - Time decay is high"
+    },
+    "monteCarlo": {
+      "id": "mc",
+      "label": "Prediction (5d)",
+      "value": "Stable",
+      "verdict": "1\u03c3: 58477-60434"
+    },
+    "barrierBreach": {
+      "id": "barrier",
+      "label": "Touch Probability",
+      "value": "100%",
+      "verdict": "\u00b12% touch: Up 100%, Down 100%"
+    },
+    "streakReversal": {
+      "id": "streak",
+      "label": "Reversal Chance",
+      "value": "Medium",
+      "verdict": "Streak: 2d, P(rev): 42%"
+    },
+    "painZone": {
+      "id": "pain",
+      "label": "Expiry Pin",
+      "value": 59400,
+      "verdict": "MAGNET LEVEL - Price sticks near 59400"
+    },
+    "rangeQuartiles": {
+      "id": "range",
+      "label": "Expected Range",
+      "value": "\u00b1359",
+      "verdict": "\u00b1359 pts (median)"
+    },
+    "momentumPulse": {
+      "id": "momentum",
+      "label": "Momentum",
+      "value": "6",
+      "verdict": "Weak/Range-bound"
+    },
+    "gexCluster": {
+      "id": "gex",
+      "label": "Support Level",
+      "value": "0.0Bn",
+      "verdict": "WEAK SUPPORT - Can break down"
+    },
+    "eventRadar": {
+      "id": "event",
+      "label": "Next Event",
+      "value": "Weekend",
+      "verdict": "Markets closed"
+    },
+    "trafficLight": {
+      "id": "traffic",
+      "label": "System Status",
+      "value": "GO",
+      "verdict": "ALL CLEAR - Safe to trade"
+    },
+    "fomoMeter": {
+      "id": "fomo",
+      "label": "Greed Meter",
+      "value": 35,
+      "verdict": "NEUTRAL - No rush to trade"
+    }
+  },
+  "overallVerdict": {
+    "stance": "BULLISH",
+    "action": "Conditions favor LONG positions",
+    "strategy": "Buy on dips, sell OTM puts, ride momentum",
+    "summary": "BANKNIFTY shows TRENDING regime with GO signal. ML consensus: 6 bullish vs 1 bearish signals out of 7 total.",
+    "bullishSignals": 6,
+    "bearishSignals": 1,
+    "totalSignals": 7,
+    "bullishPct": 85.7,
+    "kellySize": "5%",
+    "disclaimer": "Educational analysis only. Past performance does not guarantee future results. Trade at your own risk."
+  }
+}

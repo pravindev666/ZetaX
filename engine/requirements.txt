@@ -1,0 +1,18 @@
+# Tradyxa RubiX - Python ML Engine Dependencies
+# Python 3.12+
+
+# Data
+yfinance>=0.2.38
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Scientific Computing
+scipy>=1.13.0
+
+# Machine Learning
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+hmmlearn>=0.3.0
+
+# Utilities
+joblib>=1.4.0

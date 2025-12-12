@@ -1,0 +1,47 @@
+name: Daily Inference
+
+on:
+  schedule:
+    # Every 30 min M-F during Indian market hours (9:15 AM - 3:30 PM IST)
+    # IST = UTC + 5:30, so 9:15 AM IST = 3:45 AM UTC
+    # Market close 3:30 PM IST = 10:00 AM UTC
+    - cron: '15,45 4-10 * * 1-5'  # Every 30 min from 4:15 AM to 10:45 AM UTC, Mon-Fri
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  infer:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('engine/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r engine/requirements.txt
+      
+      - name: Run Inference Script
+        run: python engine/scripts/infer.py
+        timeout-minutes: 10
+      
+      - name: Commit Updated JSON
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/rubix_vault.json
+          git commit -m "chore: inference update $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]" || echo "No changes"
+          git push || echo "Push failed"
