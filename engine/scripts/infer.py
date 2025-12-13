@@ -22,7 +22,7 @@ from pathlib import Path
 SCRIPTS_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-from data_fetcher import fetch_inference_data, get_live_price
+from data_fetcher import fetch_inference_data, get_live_price, fetch_global_sentiment
 from feature_builder import build_features
 from hmm_regime import infer_regime, MODELS_DIR
 from rf_reversal import infer_reversal
@@ -267,7 +267,62 @@ def generate_overall_verdict(
         'totalSignals': total_signals,
         'bullishPct': round(bullish_pct, 1),
         'kellySize': kelly_text,
-        'disclaimer': 'Educational analysis only. Past performance does not guarantee future results. Trade at your own risk.'
+    }
+
+
+def generate_forecast_verdict(
+    momentum: dict,
+    regime: dict,
+    rsi: float,
+    vix: float,
+    stance: str,
+    global_sentiment: dict
+) -> dict:
+    """Generate Tomorrow/Intraday/Swing forecast using Technicals + Global Cues."""
+    
+    # 1. Tomorrow's Outlook (Technicals + Globals)
+    tech_bias = 'BULLISH' if stance in ['BULLISH', 'LEAN BULLISH'] else 'BEARISH' if stance in ['BEARISH', 'LEAN BEARISH'] else 'NEUTRAL'
+    
+    # Global Sentiment Check
+    global_bias = global_sentiment['sentiment']
+    g_change = global_sentiment['change_pct']
+    
+    # Fuse Technical + Global
+    if global_bias == 'BEARISH' and tech_bias == 'BULLISH':
+        tomorrow = f"Gap Down likely (Global Weakness {g_change}% overrides Technicals)."
+    elif global_bias == 'BULLISH' and tech_bias == 'BEARISH':
+        tomorrow = f"Gap Up likely (Global Strength {g_change}% overrides Technicals)."
+    elif global_bias == 'BEARISH' and tech_bias == 'BEARISH':
+        tomorrow = f"Strong Gap Down likely (Global Drag {g_change}% confirms)."
+    elif global_bias == 'BULLISH' and tech_bias == 'BULLISH':
+        tomorrow = f"Strong Gap Up likely (Global Push {g_change}% confirms)."
+    elif tech_bias == 'BULLISH':
+        tomorrow = "Gap Up or Bullish Continuation likely."
+    elif tech_bias == 'BEARISH':
+        tomorrow = "Gap Down or Selling Pressure likely."
+    else:
+        tomorrow = "Flat/Range-bound expected."
+    
+    # Logic for Intraday 
+    if vix > 18 or regime.get('regime') == 'CHAOTIC':
+        intraday = "Scalp quickly. Don't hold losing trades."
+    elif regime.get('regime') == 'TRENDING':
+        intraday = "Trend Day likely. Buy pullbacks."
+    else:
+        intraday = "Range trading. Buy support, Sell resistance."
+
+    # Logic for Swing
+    if stance in ['BULLISH', 'LEAN BULLISH']:
+        swing = "Hold BULLISH positions. Raise trailing stops."
+    elif stance in ['BEARISH', 'LEAN BEARISH']:
+        swing = "Hold BEARISH positions. Or stay Cash."
+    else:
+        swing = "Avoid overnight positions. Close EOD."
+
+    return {
+        'tomorrow': tomorrow,
+        'intraday': intraday,
+        'swing': swing
     }
 
 
@@ -283,6 +338,9 @@ def run_inference(index: str = 'NIFTY') -> dict:
     """
     print(f"Running inference for {index}...")
     
+    # Fetch Global Sentiment (S&P Futures) for validation
+    global_sentiment = fetch_global_sentiment()
+
     # Symbol mapping
     symbol = "^NSEI" if index == 'NIFTY' else "^NSEBANK"
     vix_symbol = "^INDIAVIX"
@@ -378,12 +436,28 @@ def run_inference(index: str = 'NIFTY') -> dict:
         win_stats['avg_loss']
     )
     
-    # Hurst
+    # Hurst cross-check
     hurst = calculate_hurst_exponent(index_df['Close'])
-    hurst_verdict = "Trending (momentum works)" if hurst > 0.55 else "Mean-reverting (contrarian works)" if hurst < 0.45 else "Random walk"
+    if hurst > 0.6:
+        hurst_verdict = "Strong Trend - Ride it"
+    elif hurst < 0.4:
+        hurst_verdict = "Choppy Market - Don't Chase"
+    else:
+        hurst_verdict = "Random Walk - No clear edge"
     
     # Friday Fear
-    friday = get_friday_fear(index_df, live_price)
+    friday = get_friday_fear(index_df, live_price, global_sentiment=global_sentiment)
+    
+    # Dynamic Time-Aware Urgency (Friday Afternoon)
+    now = datetime.now()
+    if now.weekday() == 4: # Friday
+        if 15 <= now.hour < 16:
+            if now.minute < 30: # 3:00 PM - 3:29 PM
+                friday['verdict'] = f"⚠ ACT NOW: {friday['verdict']}"
+            else: # 3:30 PM - 3:59 PM
+                friday['verdict'] = f"🔒 RISK LOCKED: {friday['verdict']}"
+        elif now.hour >= 16:
+             friday['verdict'] = f"🔒 MARKET CLOSED: {friday['verdict']}"
     
     # Monte Carlo
     mc = monte_carlo_cones(live_price, live_vix/100, T_days=5, returns=returns)
@@ -400,7 +474,17 @@ def run_inference(index: str = 'NIFTY') -> dict:
     # VIX Term Structure
     vix_5d = float(features['vix_5d_avg'].iloc[-1])
     vix_20d = float(features['vix_20d_avg'].iloc[-1])
-    vix_term = 'Contango' if vix_20d > vix_5d * 1.05 else 'Backwardation' if vix_5d > vix_20d * 1.05 else 'Flat'
+    # Contango: Spot < 5d < 20d (Healthy)
+    # Backwardation: Spot > 5d (Fear)
+    if live_vix > vix_5d:
+        vix_term = 'Backwardation'
+        term_verdict = "Fear rising - hedging active"
+    elif vix_5d < vix_20d:
+        vix_term = 'Contango'
+        term_verdict = "Normal Market Structure"
+    else:
+        vix_term = 'Flat'
+        term_verdict = "Uncertainty - wait"
     
     # Traffic Light (Fix #11)
     traffic = traffic_light_score(
@@ -409,6 +493,12 @@ def run_inference(index: str = 'NIFTY') -> dict:
         live_vix,
         momentum.get('score', 50)
     )
+
+    # Conflict Resolution: Force Kelly to 0 if Traffic is STOP
+    if traffic['signal'] == 'STOP':
+        kelly['kelly_pct'] = "0%"
+        kelly['kelly_fraction'] = 0.0
+        kelly['verdict'] = "Cash is King (Traffic STOP)"
     
     # FOMO Meter (Fix #12)
     fomo = fomo_meter_with_volume(
@@ -424,6 +514,52 @@ def run_inference(index: str = 'NIFTY') -> dict:
     prev_close = float(index_df['Close'].iloc[-2]) if len(index_df) > 1 else live_price
     daily_change = (live_price - prev_close) / prev_close
     
+    # Pivot Points (S1) Support Calculation
+    # Uses yesterday's data (row -2) since row -1 is active today
+    if len(index_df) > 1:
+        y_high = float(index_df['High'].iloc[-2])
+        y_low = float(index_df['Low'].iloc[-2])
+        y_close = float(index_df['Close'].iloc[-2])
+        pivot_p = (y_high + y_low + y_close) / 3
+        pivot_s1 = 2 * pivot_p - y_high
+    else:
+        pivot_s1 = live_price * 0.99 # Fallback
+    
+    # Calculate overall verdict and forecast
+    overall_verdict = generate_overall_verdict(
+        traffic=traffic,
+        regime=regime,
+        momentum=momentum,
+        fomo=fomo,
+        var_result=var_result,
+        vix=live_vix,
+        hurst=hurst,
+        kelly=kelly,
+        index=index
+    )
+    
+    forecast = generate_forecast_verdict(
+        momentum=momentum,
+        regime=regime,
+        rsi=float(latest['rsi_14']),
+        vix=live_vix,
+        stance=overall_verdict['stance'],
+        global_sentiment=global_sentiment
+    )
+    
+    # Time-Aware Context for Hero Header
+    now = datetime.now()
+    if 9 <= now.hour < 10 and now.minute < 15:
+        time_context = "PRE-MARKET: "
+    elif 9 <= now.hour < 10:
+        time_context = "OPENING BELL: "
+    elif 15 <= now.hour < 16 and now.minute < 30:
+        time_context = "CLOSING HOUR: "
+    elif now.hour >= 16 or now.hour < 9:
+        time_context = "POST-MARKET: "
+    else:
+        time_context = "" # Mid-day standard
+
     # Build output JSON matching frontend types.ts
     output = {
         'generated_at': datetime.now().isoformat(),
@@ -431,11 +567,11 @@ def run_inference(index: str = 'NIFTY') -> dict:
         'timestamp': datetime.now().strftime("%H:%M:%S"),
         
         'hero': {
-            'verdictTitle': f"{'BULLISH EDGE DETECTED' if momentum['score'] > 55 else 'BEARISH DIVERGENCE' if momentum['score'] < 45 else 'NEUTRAL CONDITIONS'}",
+            'verdictTitle': f"{time_context}{overall_verdict['stance']} CONSENSUS",
             'verdictSubtitle': regime.get('regime', 'UNKNOWN') + f" regime with {regime.get('probability', 0)*100:.0f}% confidence",
             'bullishProbability': min(max(momentum['score'] + (10 if regime.get('regime') == 'TRENDING' else -10 if regime.get('regime') == 'CHAOTIC' else 0), 0), 100),
-            'riskLevel': int((1 - kelly['kelly_fraction'] / 0.25) * 100),
-            'riskVerdict': 'Low Risk' if var_result['var_95'] > -0.02 else 'Moderate Risk' if var_result['var_95'] > -0.03 else 'High Risk',
+            'riskLevel': int(max(0, 100 - traffic['score'])),
+            'riskVerdict': 'Low Risk' if traffic['score'] > 70 else 'Moderate Risk' if traffic['score'] > 40 else 'High Risk',
             'kellySize': int(kelly['kelly_fraction'] * 100),
             'kellyVerdict': kelly['verdict']
         },
@@ -500,7 +636,7 @@ def run_inference(index: str = 'NIFTY') -> dict:
                 'id': 'vixterm',
                 'label': 'Volatility Term',
                 'value': vix_term,
-                'verdict': 'SELL OPTIONS - Collect premium' if vix_term == 'Contango' else 'BUY OPTIONS - Protect yourself' if vix_term == 'Backwardation' else 'NO EDGE - Neutral',
+                'verdict': term_verdict,
                 'history': [
                     {'time': 'Spot', 'value': round(live_vix, 1)},
                     {'time': '5d Avg', 'value': round(vix_5d, 1)},
@@ -520,7 +656,7 @@ def run_inference(index: str = 'NIFTY') -> dict:
                 'label': 'Time Decay',
                 'value': theta['value'],
                 'unit': theta['unit'],
-                'verdict': 'SELL THETA - Time decay is high' if theta['value'] < -15 else 'HOLD OPTIONS - Low decay today'
+                'verdict': 'Sellers Winning (Fast Decay)' if theta['value'] < -15 else 'Decay is Slow (Buyers Safe)'
             },
             
             'monteCarlo': {
@@ -567,16 +703,20 @@ def run_inference(index: str = 'NIFTY') -> dict:
             
             'gexCluster': {
                 'id': 'gex',
-                'label': 'Support Level',
-                'value': f"{'+' if float(latest['volume_ratio']) > 1 else ''}{float(latest['volume_ratio'])*2:.1f}Bn",
-                'verdict': 'STRONG FLOOR - Unlikely to fall' if float(latest['volume_ratio']) > 1.2 else 'WEAK SUPPORT - Can break down'
+                'label': 'Key Support (S1)',
+                'value': f"{int(pivot_s1)}",
+                'verdict': f"Price floor at {int(pivot_s1)}"
             },
             
             'eventRadar': {
                 'id': 'event',
                 'label': 'Next Event',
-                'value': 'Weekly Expiry' if datetime.now().weekday() < 4 else 'Weekend',
-                'verdict': f"{(4 - datetime.now().weekday())}d to expiry" if datetime.now().weekday() < 4 else 'Markets closed'
+                'value': 'Market Open' if (now.hour == 9 and now.minute < 15) else 
+                         'Closing Bell' if (now.hour == 15 and now.minute < 30) else
+                         'Weekly Expiry' if now.weekday() < 4 else 'Weekend',
+                'verdict': f"Opening in {15-now.minute}m" if (now.hour == 9 and now.minute < 15) else
+                           f"Closing in {30-now.minute}m" if (now.hour == 15 and now.minute < 30) else
+                           f"{(4 - now.weekday())}d to expiry" if now.weekday() < 4 else 'Markets closed'
             },
             
             'trafficLight': {
@@ -595,17 +735,11 @@ def run_inference(index: str = 'NIFTY') -> dict:
         },
         
         # Overall Verdict - ML Summary for traders
-        'overallVerdict': generate_overall_verdict(
-            traffic=traffic,
-            regime=regime,
-            momentum=momentum,
-            fomo=fomo,
-            var_result=var_result,
-            vix=live_vix,
-            hurst=hurst,
-            kelly=kelly,
-            index=index
-        )
+        # Overall Verdict - ML Summary for traders
+        'overallVerdict': overall_verdict,
+        
+        # Forecast for Tomorrow/Intraday/Swing
+        'forecast': forecast
     }
     
     return output

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Maximize2, Info, Moon, Sun, AlertTriangle, Radio, Shield, FileText, Lock, HelpCircle } from 'lucide-react';
+import { RefreshCw, Maximize2, Info, Moon, Sun, AlertTriangle, Radio, Shield, FileText, Lock, HelpCircle, Diamond } from 'lucide-react';
 import { getMarketData, getHelpContent, getMarketDataAsync } from './services/marketData';
 import { MarketDataState, DataPoint } from './types';
 import { GlassTile, Modal, SegmentedControl, StatusDot } from './components/ui';
@@ -23,6 +23,218 @@ const EmptyPage = ({ title, onBack }: { title: string, onBack: () => void }) => 
     <div className="p-12 border border-dashed border-border rounded-lg flex flex-col items-center justify-center opacity-50">
       <Lock size={48} className="mb-4 text-text-muted" />
       <p className="text-xl font-mono">CONTENT_LOCKED // COMING_SOON</p>
+    </div>
+  </div>
+);
+
+const PrivacyPolicy = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-screen pt-32 px-8 max-w-4xl mx-auto text-text-main pb-20">
+    <button onClick={onBack} className="text-cyan-500 mb-8 hover:underline font-mono">← BACK TO DASHBOARD</button>
+    <h1 className="text-4xl font-header font-bold mb-2">Privacy Policy</h1>
+    <p className="text-text-muted mb-8">How we handle your data and protect your privacy</p>
+
+    <div className="h-px w-full bg-border mb-8"></div>
+
+    <div className="space-y-8 font-sans leading-relaxed">
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Overview</h2>
+        <p>This website does not collect, store, or process personally identifiable information (PII). Tradyxa Quant Dashboard uses publicly available market data (e.g., Yahoo Finance, NSE India) and does not require user accounts or user-submitted data for access. Market data may be delayed up to 30 minutes. For educational use only.</p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Hosting & Logs</h2>
+        <p>The site is hosted by Cloudflare Pages (Cloudflare, Inc.). For security and performance, Cloudflare may process limited technical information such as IP address, user agent, and timestamps in server logs. We do not persist or export these logs. To the best of our knowledge, host logs are auto-purged within a short retention window (typically ≤ 7 days). We do not combine logs with any other data to identify individuals.</p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Analytics</h2>
+        <p>We may use anonymous, aggregate analytics (e.g., Cloudflare Analytics) for performance monitoring only. If Google Analytics is enabled, it will operate under Google Consent Mode v2 and respect your consent choices. IP anonymization is enabled where applicable.</p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Cookies</h2>
+        <p>We use minimal cookies for theme preferences (dark/light) and basic site functionality. Analytics and advertising cookies (if any) are used only with your consent. This website displays advertisements from Adsterra (adsterra.com), a third-party advertising network. Adsterra may use cookies and similar technologies to deliver relevant ads and measure ad performance. We do not control Adsterra's data collection practices. For more information about Adsterra's privacy practices, please visit their privacy policy. Users in the EEA/UK are shown a Google-certified CMP (Funding Choices) implementing IAB TCF v2.2. You can change your choices at any time via the Cookie Settings/Preferences link or banner.</p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Cookie Settings / Preferences</h2>
+        <p>You can manage your cookie preferences at any time by clicking the "Cookie Preferences" link in the footer.</p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">International & Indian Compliance</h2>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+          <li><strong>India:</strong> Information Technology Act, 2000; SPDI Rules 2011; SEBI IA Regulations (not an adviser).</li>
+          <li><strong>EU/UK:</strong> GDPR/UK-GDPR – lawful basis: legitimate interests and consent (where required).</li>
+          <li><strong>California:</strong> CCPA/CPRA – we do not sell personal information.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Your Choices</h2>
+        <p>You may request removal of any retained technical data by contacting us. Provide a detailed description (date/time/region) so we can coordinate with our host. For cookie choices, use the Cookie Settings link above to review or modify consent.</p>
+      </section>
+
+      <section className="bg-surface p-6 rounded border border-border mt-8">
+        <h2 className="text-sm font-header font-bold text-warning mb-2 uppercase tracking-wider">Affiliation Disclaimer</h2>
+        <p className="text-sm">Tradyxa RubiX is a product of Zeta Aztra Technologies (India) and is not affiliated with any other Tradyxa-named companies or domains.</p>
+      </section>
+
+      <div className="border-t border-border pt-8 mt-12 text-sm text-text-muted font-mono">
+        <p>Operated by Zeta Aztra Technologies (Individual Proprietorship, India) • © 2025 Zeta Aztra Technologies. All Rights Reserved.</p>
+        <p className="mt-2">Jurisdiction: Chennai, Tamil Nadu • Contact: zetaaztratech@gmail.com • Version: v1.0.0</p>
+      </div>
+    </div>
+  </div>
+);
+
+const CookiePreferences = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-screen pt-32 px-8 max-w-4xl mx-auto text-text-main pb-20">
+    <button onClick={onBack} className="text-cyan-500 mb-8 hover:underline font-mono">← BACK TO DASHBOARD</button>
+    <h1 className="text-4xl font-header font-bold mb-2">Cookie Notice</h1>
+    <p className="text-text-muted mb-8">How we use cookies and manage your consent preferences</p>
+    <div className="h-px w-full bg-border mb-8"></div>
+    <div className="space-y-8 font-sans leading-relaxed">
+      <section>
+        <p>We use a minimal set of cookies and similar technologies to operate this site. Some cookies are strictly necessary; others (analytics) are used only with your consent.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Cookie Categories</h2>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Strictly Necessary / Security:</strong> required for basic operation and security; always enabled.</li>
+          <li><strong>Functionality:</strong> theme preference (dark/light), UI settings.</li>
+          <li><strong>Analytics:</strong> anonymized traffic/performance metrics (enabled only with consent).</li>
+        </ul>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Consent Management</h2>
+        <p>We provide a consent banner to manage your preferences. Your choices are stored locally in your browser and will persist until you change them or clear your browser data.</p>
+        <button className="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-sm font-bold text-sm transition-colors" onClick={() => localStorage.removeItem('rubix_cookie_consent') || window.location.reload()}>Reset / Open Cookie Settings</button>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Third Parties</h2>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Cloudflare Pages:</strong> hosting and performance; may log IPs for security.</li>
+          <li><strong>Adsterra:</strong> third-party advertising network (adsterra.com); may use cookies for ad delivery and measurement. We do not control Adsterra's data collection practices.</li>
+          <li><strong>Optional Google Analytics:</strong> anonymized analytics with Consent Mode v2.</li>
+        </ul>
+      </section>
+      <div className="bg-surface p-6 rounded border border-border mt-8">
+        <h2 className="text-sm font-header font-bold text-warning mb-2 uppercase tracking-wider">Affiliation Disclaimer</h2>
+        <p className="text-sm">Tradyxa RubiX is a product of Zeta Aztra Technologies (India) and is not affiliated with any other Tradyxa-named companies or domains.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const TermsOfUse = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-screen pt-32 px-8 max-w-4xl mx-auto text-text-main pb-20">
+    <button onClick={onBack} className="text-cyan-500 mb-8 hover:underline font-mono">← BACK TO DASHBOARD</button>
+    <h1 className="text-4xl font-header font-bold mb-2">Terms of Use</h1>
+    <p className="text-text-muted mb-8">User obligations, acceptable use, and legal terms</p>
+    <div className="h-px w-full bg-border mb-8"></div>
+    <div className="space-y-8 font-sans leading-relaxed">
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Acceptance</h2>
+        <p>By accessing or using this website, you agree to these Terms, the Privacy Policy, Cookie Notice, and Disclaimer. If you do not agree, do not use the site.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">No Advice</h2>
+        <p>The site provides educational and informational content only. We do not provide investment advice. You acknowledge sole responsibility for your trading/investment actions.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Intellectual Property</h2>
+        <p>© 2025 Zeta Aztra Technologies. All rights reserved. All code, models, visualizations, and branding are protected under applicable laws, including the Indian Copyright Act, 1957. Unauthorized reproduction, scraping, framing, or redistribution is prohibited. "Tradyxa" and "Zeta Aztra" are brand identifiers; unauthorized use is prohibited.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Data Attribution</h2>
+        <p>Market data © respective owners. Tradyxa Quant Dashboard is not affiliated with NSE or Yahoo. Derived analytics and computed indicators are © Zeta Aztra Technologies. Market data may be delayed up to 30 minutes. For educational use only.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Acceptable Use</h2>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>No unlawful, abusive, or malicious use of the site or data.</li>
+          <li>No automated scraping or bulk extraction of content without prior written consent.</li>
+          <li>No reverse engineering of proprietary models or bypassing rate limits.</li>
+        </ul>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Jurisdiction & Contact</h2>
+        <p>These Terms are governed by the laws of India. All disputes are subject exclusively to the courts of Chennai, Tamil Nadu. Contact: zetaaztratech@gmail.com.</p>
+      </section>
+      <div className="bg-surface p-6 rounded border border-border mt-8">
+        <h2 className="text-sm font-header font-bold text-warning mb-2 uppercase tracking-wider">Affiliation Disclaimer</h2>
+        <p className="text-sm">Tradyxa RubiX is a product of Zeta Aztra Technologies (India) and is not affiliated with any other Tradyxa-named companies or domains.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const DisclaimerView = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-screen pt-32 px-8 max-w-4xl mx-auto text-text-main pb-20">
+    <button onClick={onBack} className="text-cyan-500 mb-8 hover:underline font-mono">← BACK TO DASHBOARD</button>
+    <h1 className="text-4xl font-header font-bold mb-2">Disclaimer</h1>
+    <p className="text-text-muted mb-8">Educational and informational use only. Not financial advice.</p>
+    <div className="h-px w-full bg-border mb-8"></div>
+    <div className="space-y-8 font-sans leading-relaxed">
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Educational Purpose Only</h2>
+        <p>The information, analytics, indicators, models, forecasts, and visualizations on this website are provided solely for educational and informational purposes. Nothing here constitutes financial, investment, trading, tax, accounting, or legal advice.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">SEBI Notice</h2>
+        <p>Zeta Aztra Technologies, its owner(s), developers, and affiliates are not SEBI-registered investment advisers or research analysts. All trading and investment decisions made based on the information presented here are taken entirely at the user's own risk.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Liability Disclaimer</h2>
+        <p>We explicitly disclaim any and all liability for losses, damages, or other consequences arising from use of, reliance upon, or inability to use the content, data, indicators, or models on this website. Users should consider consulting a SEBI-registered financial adviser.</p>
+      </section>
+      <section className="bg-surface p-6 rounded border border-border mt-8">
+        <h2 className="text-sm font-header font-bold text-warning mb-2 uppercase tracking-wider">Third-Party Content / Data Accuracy / User Acknowledgment</h2>
+        <p className="text-sm mb-4">This website may display advertisements and links to external websites. We do not endorse or control third-party content. Market data may be delayed up to 30 minutes.</p>
+        <p className="text-sm font-bold">By using this website, you acknowledge full responsibility for your decisions.</p>
+      </section>
+      <div className="border-t border-border pt-8 mt-12 text-sm text-text-muted font-mono">
+        <p>Operated by Zeta Aztra Technologies (Individual Proprietorship, India) • © 2025 Zeta Aztra Technologies. All Rights Reserved.</p>
+        <p className="mt-2">Jurisdiction: Chennai, Tamil Nadu • Contact: zetaaztratech@gmail.com • Version: v1.0.0</p>
+      </div>
+    </div>
+  </div>
+);
+
+const About = ({ onBack }: { onBack: () => void }) => (
+  <div className="min-h-screen pt-32 px-8 max-w-4xl mx-auto text-text-main pb-20">
+    <button onClick={onBack} className="text-cyan-500 mb-8 hover:underline font-mono">← BACK TO DASHBOARD</button>
+    <h1 className="text-4xl font-header font-bold mb-2">About Tradyxa RubiX</h1>
+    <p className="text-text-muted mb-8">AI-Powered Market Intelligence Dashboard</p>
+    <div className="h-px w-full bg-border mb-8"></div>
+    <div className="space-y-8 font-sans leading-relaxed">
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Purpose</h2>
+        <p>Tradyxa RubiX is an educational platform designed to provide advanced options analytics, volatility indicators, and machine learning-based forecasts for NIFTY options trading. The dashboard aggregates real-time market data from NSE India and Yahoo Finance to compute various metrics including IV Rank, Volatility Risk Premium, Market Mood Index, and predictive models using Linear Regression, Logistic Regression, Random Forest, Quantile Regression, and LSTM neural networks.</p>
+        <div className="bg-surface/50 border-l-4 border-warning p-4 mt-4 text-sm">
+          <strong>Important:</strong> This dashboard is for educational purposes only and does not constitute financial, investment, trading, or legal advice. All trading decisions are made at your own risk.
+        </div>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Data Sources & Attribution</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>NSE India:</strong> Real-time option chain data, historical prices</li>
+          <li><strong>Yahoo Finance:</strong> Market data</li>
+        </ul>
+        <p className="text-xs text-text-muted mt-2">Market data © respective owners. Tradyxa Quant Dashboard is unaffiliated with NSE or Yahoo. Market data may be delayed up to 30 minutes.</p>
+      </section>
+      <section>
+        <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Legal & Privacy</h2>
+        <p><strong>Operated by:</strong> Zeta Aztra Technologies (Individual Proprietorship, India)</p>
+        <p><strong>Jurisdiction:</strong> Chennai, Tamil Nadu, India</p>
+        <p><strong>Contact:</strong> zetaaztratech@gmail.com</p>
+        <p><strong>Version:</strong> v1.0.0</p>
+      </section>
+      <div className="bg-surface p-6 rounded border border-border mt-8">
+        <h2 className="text-sm font-header font-bold text-warning mb-2 uppercase tracking-wider">Affiliation Disclaimer</h2>
+        <p className="text-sm">Tradyxa RubiX is a product of Zeta Aztra Technologies (India) and is not affiliated with any other Tradyxa-named companies or domains.</p>
+      </div>
     </div>
   </div>
 );
@@ -117,7 +329,22 @@ export default function App() {
     });
   };
 
-  // --- Render Empty Page ---
+  // --- Render Other Pages ---
+  if (view === 'Privacy Policy') {
+    return <PrivacyPolicy onBack={() => setView('dashboard')} />;
+  }
+  if (view === 'Cookie Preferences') {
+    return <CookiePreferences onBack={() => setView('dashboard')} />;
+  }
+  if (view === 'Terms of Use') {
+    return <TermsOfUse onBack={() => setView('dashboard')} />;
+  }
+  if (view === 'Disclaimer') {
+    return <DisclaimerView onBack={() => setView('dashboard')} />;
+  }
+  if (view === 'About') {
+    return <About onBack={() => setView('dashboard')} />;
+  }
   if (view !== 'dashboard') {
     return <EmptyPage title={view} onBack={() => setView('dashboard')} />;
   }
@@ -200,14 +427,70 @@ export default function App() {
         </div>
       )}
 
+      {/* --- How To Use Modal --- */}
+      <Modal
+        isOpen={isHowToOpen}
+        onClose={() => setIsHowToOpen(false)}
+        title="SYSTEM MANUAL & EDGE"
+      >
+        <div className="space-y-8 text-text-main font-sans leading-relaxed">
+
+          <section>
+            <h3 className="text-xl font-header font-bold text-cyan-400 mb-3 flex items-center gap-2">
+              <Diamond size={20} /> THE TRADER'S EDGE
+            </h3>
+            <p className="text-lg text-text-muted">
+              Can you really make profit in real-time? <strong className="text-bullish">YES.</strong> Not by predicting the future, but by tilting probabilities in your favor and eliminating stupid mistakes.
+            </p>
+          </section>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-surface p-4 rounded border border-border">
+              <h4 className="font-header font-bold text-lg mb-2 text-warning">🚦 SOLVES "ANALYSIS PARALYSIS"</h4>
+              <p className="text-sm text-text-muted mb-2">Most traders freeze when signals conflict. We fixed that.</p>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li><strong className="text-bullish">GO (&gt;70):</strong> All systems align. Hit the button.</li>
+                <li><strong className="text-bearish">STOP (&lt;40):</strong> Conflicting signals. Cash is King.</li>
+              </ul>
+            </div>
+
+            <div className="bg-surface p-4 rounded border border-border">
+              <h4 className="font-header font-bold text-lg mb-2 text-warning">🧠 REGIME DETECTION</h4>
+              <p className="text-sm text-text-muted mb-2">Retail traders use one strategy for all markets. You won't.</p>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li><strong className="text-cyan-400">TRENDING:</strong> Buy Breakouts. (Momentum works)</li>
+                <li><strong className="text-purple-400">MEAN REVERTING:</strong> Fade Breakouts. (Buy Support)</li>
+              </ul>
+            </div>
+
+            <div className="bg-surface p-4 rounded border border-border">
+              <h4 className="font-header font-bold text-lg mb-2 text-warning">🛡️ KELLY MONEY MANAGEMENT</h4>
+              <p className="text-sm text-text-muted mb-2">Knowing <i>what</i> to buy is easy. Knowing <i>how much</i> is the secret.</p>
+              <p className="text-sm">RubiX explicitly tells you to <strong>Bet 18%</strong> on high conviction days and <strong>0%</strong> on dangerous days.</p>
+            </div>
+
+            <div className="bg-surface p-4 rounded border border-border">
+              <h4 className="font-header font-bold text-lg mb-2 text-warning">🔮 PROBABILITY MATH</h4>
+              <p className="text-sm text-text-muted mb-2">Stop drawing crayon lines. Use Physics.</p>
+              <p className="text-sm">We calculate the exact % chance price touches a level (e.g., <strong>19%</strong>). If the math says it's a lottery ticket, don't buy it.</p>
+            </div>
+          </div>
+
+          <section className="bg-surface/50 p-6 border-l-4 border-bullish italic">
+            "RubiX doesn't trade *for* you. It acts as a Quant Analyst sitting next to you, doing the complex math every 30 minutes so you can focus on execution."
+          </section>
+
+        </div>
+      </Modal>
+
       {/* --- Main Layout --- */}
       <div className="max-w-[1800px] mx-auto p-4 md:p-8 flex flex-col gap-8 relative z-10">
 
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-center bg-surface/80 backdrop-blur-md p-6 border border-border rounded-sm gap-6 shadow-sm">
           <div className="flex items-center gap-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-sm flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Radio className="text-white" size={24} />
+            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-sm flex items-center justify-center shadow-lg shadow-cyan-500/20 group hover:shadow-cyan-400/40 transition-shadow duration-500">
+              <Diamond className="text-white fill-white/20 animate-pulse group-hover:scale-110 transition-transform duration-300" size={24} />
             </div>
             <div>
               <h1 className="text-4xl font-header font-black tracking-tight text-text-main leading-none">
@@ -248,6 +531,14 @@ export default function App() {
               title="Hard Refresh"
             >
               <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" />
+            </button>
+
+            <button
+              onClick={() => setIsHowToOpen(true)}
+              className="p-3 bg-cyan-900/20 hover:bg-cyan-900/40 border border-cyan-900/50 hover:border-cyan-500/50 rounded-sm text-cyan-500 transition-all duration-300"
+              title="How To Use / System Value"
+            >
+              <HelpCircle size={20} />
             </button>
           </div>
         </header>
@@ -496,61 +787,102 @@ export default function App() {
           )}
         </div>
 
-        {/* Overall Verdict - ML Summary */}
+        {/* Verdicts & Forecasts Grid */}
         {data.overallVerdict && (
-          <div className="bg-surface/90 backdrop-blur-sm border border-border rounded-sm p-6 mt-6 relative overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-lg max-w-3xl mx-auto">
-            {/* Accent bar at top */}
-            <div className={`absolute top-0 left-0 right-0 h-1 ${data.overallVerdict.stance === 'BULLISH' || data.overallVerdict.stance === 'LEAN BULLISH'
+          <div className="mt-8 mb-24 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+
+            {/* 1. Overall Verdict (Left) */}
+            <div className="bg-surface/90 backdrop-blur-sm border border-border rounded-sm p-6 relative overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-lg flex flex-col">
+              {/* Accent bar at top */}
+              <div className={`absolute top-0 left-0 right-0 h-1 ${data.overallVerdict.stance === 'BULLISH' || data.overallVerdict.stance === 'LEAN BULLISH'
                 ? 'bg-bullish'
                 : data.overallVerdict.stance === 'BEARISH' || data.overallVerdict.stance === 'LEAN BEARISH'
                   ? 'bg-bearish'
                   : 'bg-neutral'
-              }`}></div>
+                }`}></div>
 
-            <div className="text-center">
-              <h3 className="text-sm font-mono text-text-muted uppercase tracking-widest mb-2">{data.indexName} Analysis</h3>
-              <div className={`text-4xl font-header font-black mb-2 ${data.overallVerdict.stance.includes('BULLISH')
+              <div className="text-center flex-1 flex flex-col justify-center">
+                <h3 className="text-sm font-mono text-text-muted uppercase tracking-widest mb-2">{data.indexName} Analysis</h3>
+                <div className={`text-4xl font-header font-black mb-2 ${data.overallVerdict.stance.includes('BULLISH')
                   ? 'text-bullish'
                   : data.overallVerdict.stance.includes('BEARISH')
                     ? 'text-bearish'
                     : 'text-neutral'
-                }`}>
-                {data.overallVerdict.stance}
-              </div>
-              <p className="text-lg text-text-main font-medium mb-4">{data.overallVerdict.action}</p>
-
-              {/* Signal breakdown */}
-              <div className="flex justify-center gap-6 mb-4 text-sm">
-                <div className="text-bullish">
-                  <span className="font-bold text-2xl">{data.overallVerdict.bullishSignals}</span>
-                  <div className="text-xs opacity-75">Bullish</div>
+                  }`}>
+                  {data.overallVerdict.stance}
                 </div>
-                <div className="text-text-muted">
-                  <span className="font-bold text-2xl">{data.overallVerdict.totalSignals}</span>
-                  <div className="text-xs opacity-75">Total</div>
+                <p className="text-lg text-text-main font-medium mb-4">{data.overallVerdict.action}</p>
+
+                {/* Signal breakdown */}
+                <div className="flex justify-center gap-6 mb-4 text-sm">
+                  <div className="text-bullish">
+                    <span className="font-bold text-2xl">{data.overallVerdict.bullishSignals}</span>
+                    <div className="text-xs opacity-75">Bullish</div>
+                  </div>
+                  <div className="text-text-muted">
+                    <span className="font-bold text-2xl">{data.overallVerdict.totalSignals}</span>
+                    <div className="text-xs opacity-75">Total</div>
+                  </div>
+                  <div className="text-bearish">
+                    <span className="font-bold text-2xl">{data.overallVerdict.bearishSignals}</span>
+                    <div className="text-xs opacity-75">Bearish</div>
+                  </div>
                 </div>
-                <div className="text-bearish">
-                  <span className="font-bold text-2xl">{data.overallVerdict.bearishSignals}</span>
-                  <div className="text-xs opacity-75">Bearish</div>
+
+                {/* Strategy */}
+                <div className="bg-background p-4 rounded-sm border-l-4 border-cyan-500 text-left mb-4">
+                  <span className="text-xs text-cyan-500 font-mono uppercase tracking-wider">Suggested Strategy</span>
+                  <p className="text-text-main font-medium mt-1">{data.overallVerdict.strategy}</p>
                 </div>
-              </div>
 
-              {/* Strategy */}
-              <div className="bg-background p-4 rounded-sm border-l-4 border-cyan-500 text-left mb-4">
-                <span className="text-xs text-cyan-500 font-mono uppercase tracking-wider">Suggested Strategy</span>
-                <p className="text-text-main font-medium mt-1">{data.overallVerdict.strategy}</p>
-              </div>
+                {/* Kelly reminder */}
+                <div className="text-sm text-text-muted mb-4">
+                  Position Size: <span className="text-cyan-500 font-bold">{data.overallVerdict.kellySize}</span> of capital per trade
+                </div>
 
-              {/* Kelly reminder */}
-              <div className="text-sm text-text-muted mb-4">
-                Position Size: <span className="text-cyan-500 font-bold">{data.overallVerdict.kellySize}</span> of capital per trade
+                {/* Disclaimer */}
+                <p className="text-[10px] text-text-muted opacity-60 border-t border-border pt-3 mt-auto">
+                  {data.overallVerdict.disclaimer}
+                </p>
               </div>
-
-              {/* Disclaimer */}
-              <p className="text-[10px] text-text-muted opacity-60 border-t border-border pt-3">
-                {data.overallVerdict.disclaimer}
-              </p>
             </div>
+
+            {/* 2. Market Forecast (Right) */}
+            <div className="bg-surface/90 backdrop-blur-sm border border-border rounded-sm p-6 relative overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-lg flex flex-col">
+              <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
+                <div className="w-10 h-10 rounded-sm bg-purple-500/20 flex items-center justify-center">
+                  <Diamond className="text-purple-400" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-header font-bold text-text-main leading-none">MARKET FORECAST</h3>
+                  <span className="text-xs text-text-muted font-mono">AI Predictive Pathways</span>
+                </div>
+              </div>
+
+              <div className="space-y-6 flex-1 flex flex-col justify-center">
+                <div className="bg-background/50 p-4 rounded-sm border border-border/50">
+                  <h4 className="text-xs font-mono text-purple-400 mb-1 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-purple-400"></span> TOMORROW'S OUTLOOK
+                  </h4>
+                  <p className="text-lg font-medium text-text-main">{data.forecast?.tomorrow || 'Calculating...'}</p>
+                </div>
+
+                <div className="bg-background/50 p-4 rounded-sm border border-border/50">
+                  <h4 className="text-xs font-mono text-cyan-400 mb-1 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400"></span> INTRADAY PLAN
+                  </h4>
+                  <p className="text-lg font-medium text-text-main">{data.forecast?.intraday || 'Calculating...'}</p>
+                </div>
+
+                <div className="bg-background/50 p-4 rounded-sm border border-border/50">
+                  <h4 className="text-xs font-mono text-yellow-400 mb-1 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400"></span> SWING STRATEGY
+                  </h4>
+                  <p className="text-lg font-medium text-text-main">{data.forecast?.swing || 'Calculating...'}</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 

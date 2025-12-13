@@ -149,6 +149,40 @@ def fetch_inference_data(index: str = 'NIFTY') -> tuple:
     return index_df, vix, live_price
 
 
+def fetch_global_sentiment() -> dict:
+    """
+    Fetch global market sentiment (S&P Futures).
+    Used to validate 'Tomorrow's Outlook'.
+    """
+    try:
+        # Fetch S&P 500 Futures (ES=F) - Proxy for Global/US Sentiment
+        # Works 24/5, giving better overnight cues than Spot
+        symbol = "ES=F"
+        ticker = yf.Ticker(symbol)
+        
+        # Use fast_info for speed
+        last_price = ticker.fast_info.last_price
+        prev_close = ticker.fast_info.previous_close
+        
+        if last_price and prev_close:
+            change_pct = ((last_price - prev_close) / prev_close) * 100
+            sentiment = 'BULLISH' if change_pct > 0.25 else 'BEARISH' if change_pct < -0.25 else 'NEUTRAL'
+            
+            print(f"  Global Sentinel ({symbol}): {last_price:.2f} ({change_pct:+.2f}%) -> {sentiment}")
+            
+            return {
+                'symbol': symbol,
+                'change_pct': round(change_pct, 2),
+                'sentiment': sentiment
+            }
+        
+    except Exception as e:
+        print(f"  ⚠️ Warning: Failed to fetch global sentiment: {e}")
+    
+    # Fallback
+    return {'symbol': 'ES=F', 'change_pct': 0.0, 'sentiment': 'NEUTRAL'}
+
+
 if __name__ == "__main__":
     print("=" * 60)
     print("TRADYXA RUBIX - DATA FETCHER")

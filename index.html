@@ -6,15 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary Meta Tags -->
-  <title>Tradyxa RubiX - AI-Powered NIFTY & BANKNIFTY Analytics</title>
-  <meta name="title" content="Tradyxa RubiX - AI-Powered NIFTY & BANKNIFTY Analytics" />
-  <meta name="description"
-    content="Free AI-powered trading analytics dashboard for NIFTY & BANKNIFTY. Get ML predictions, regime detection, risk metrics, and actionable verdicts. No signup required." />
-  <meta name="keywords"
-    content="NIFTY, BANKNIFTY, trading, analytics, AI, machine learning, stock market, India, NSE, options, F&O" />
+  <title>Tradyxa Rubix</title>
+  <meta name="description" content="AI-Powered Market Intelligence Dashboard for NIFTY & BANKNIFTY" />
+  <meta name="keywords" content="NIFTY, BANKNIFTY, Stock Market, AI Prediction, Trading Dashboard" />
   <meta name="author" content="Zeta Aztra Technologies" />
 
-  <!-- Favicon -->
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#06b6d4" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => console.log('SW registered:', registration.scope))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+
+  <!-- Icons -->
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
 
@@ -85,7 +95,7 @@
       /* Dark Mode (Default) */
       --bg-main: #050510;
       --bg-surface: #0a0a12;
-      --border-color: #1a1a2e;
+      --border-color: #2e2e42;
       --text-main: #ffffff;
       --text-muted: #94a3b8;
       --grid-line: rgba(0, 243, 255, 0.015);
