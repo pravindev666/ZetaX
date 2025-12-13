@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+
+=======
 # Tradyxa RubiX
 
 > **AI-Powered Market Intelligence Dashboard for NIFTY & BANKNIFTY**
@@ -711,3 +714,4 @@ This software is proprietary. Unauthorized copying, modification, or distributio
   <h3>Tradyxa RubiX</h3>
   <p><em>AI-Powered Market Intelligence</em></p>
 </div>
+>>>>>>> f80c782 (Add comprehensive README with ML docs and architecture diagrams)

@@ -126,19 +126,67 @@ def prob_touch_barrier(spot: float, barrier: float, sigma: float, T: float, r: f
     if sigma <= 0 or T <= 0:
         return 0.0
     
+    # Drift mu for the process ln(S)
     mu = r - 0.5 * sigma**2
-    lambda_param = mu / (sigma**2)
     
-    d1 = (np.log(spot / barrier) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
-    d2 = d1 - sigma * np.sqrt(T)
+    # Standard deviation over time T
+    vol_sqrt_t = sigma * np.sqrt(T)
     
-    # First passage time probability
-    if barrier > spot:  # Up barrier
-        prob = norm.cdf(-d2) + (barrier/spot)**(2*lambda_param) * norm.cdf(-d1 + 2*lambda_param*sigma*np.sqrt(T))
-    else:  # Down barrier
-        prob = norm.cdf(d2) + (barrier/spot)**(2*lambda_param) * norm.cdf(d1 - 2*lambda_param*sigma*np.sqrt(T))
+    # Log moneyness
+    log_s_b = np.log(spot / barrier)
     
-    return float(np.clip(prob, 0, 1))
+    if barrier > spot:  # Up barrier (Call-like)
+        # Probability of hitting H > S
+        # P = N( (ln(S/H) + mu*T) / vol_T ) + (H/S)^(2mu/sigma^2) * N( (ln(S/H) - mu*T) / vol_T ) -- NO wait
+        # Correct formula for P(Max >= H) with drift mu:
+        
+        lambda_param = 2 * mu / (sigma**2)
+        
+        # x term
+        x = (log_s_b + mu * T) / vol_sqrt_t
+        
+        # y term (reflected)
+        # We need N( (ln(S/H) - mu*T) / ... ) ?
+        # Actually standard result:
+        # P = N( (ln(S/H) - |mu|T)/... ) ? No.
+        
+        # Let's use the standard "One Touch" analytic formula:
+        # Reversal of d2?
+        
+        # Analytic solution for First Passage Time <= T:
+        # A = ( -log(B/S) + mu*T ) / (sigma*sqrt(T))
+        # B = ( -log(B/S) - mu*T ) / (sigma*sqrt(T))
+        # Prob = N(B) + (B/S)^(2mu/sigma^2) * N(A)  <-- Common form
+        
+        # Let's map it:
+        # Target H = barrier. Start S = spot.
+        # log_H_S = log(barrier/spot)
+        log_b_s = np.log(barrier / spot) # Positive
+        
+        term1 = (-log_b_s + mu * T) / vol_sqrt_t
+        term2 = (-log_b_s - mu * T) / vol_sqrt_t
+        
+        prob = norm.cdf(term2) + (barrier / spot)**(lambda_param) * norm.cdf(term1)
+        
+    else:  # Down barrier (Put-like) H < S
+        # Symmetry: Map S -> 1/S, H -> 1/H, mu -> -mu ?
+        # Or just use the formula with correct signs
+        
+        log_s_b = np.log(spot / barrier) # Positive
+        lambda_param = 2 * mu / (sigma**2)
+        
+        # For down barrier, we need Min <= H.
+        # Similar structure but signs flipped.
+        
+        log_s_b = np.log(spot/barrier) # Positive
+        
+        # term1 = ( -log(S/B) + mu*T ) / ...
+        term1 = (-log_s_b + mu * T) / vol_sqrt_t
+        term2 = (-log_s_b - mu * T) / vol_sqrt_t
+        
+        prob = norm.cdf(term2) + (spot / barrier)**(-lambda_param) * norm.cdf(term1)
+
+    return float(np.clip(prob, 0.0, 1.0))
 
 
 def monte_carlo_cones(spot: float, sigma: float, T_days: int = 5, n_paths: int = 10000, returns: pd.Series = None) -> dict:

@@ -1,12 +1,12 @@
 {
-  "generated_at": "2025-12-12T21:38:06.073624",
+  "generated_at": "2025-12-14T03:21:54.780565",
   "indexName": "NIFTY",
-  "timestamp": "21:38:06",
+  "timestamp": "03:21:54",
   "hero": {
-    "verdictTitle": "BEARISH DIVERGENCE",
+    "verdictTitle": "POST-MARKET: BULLISH CONSENSUS",
     "verdictSubtitle": "TRENDING regime with 100% confidence",
     "bullishProbability": 23,
-    "riskLevel": 80,
+    "riskLevel": 26,
     "riskVerdict": "Low Risk",
     "kellySize": 5,
     "kellyVerdict": "Conservative"
@@ -32,10 +32,10 @@
       "id": "probs",
       "label": "Option Skew",
       "value": "Neutral",
-      "verdict": "Calls: 51%, Puts: 49%",
+      "verdict": "Calls: 53%, Puts: 47%",
       "meta": {
-        "call": 51,
-        "put": 48
+        "call": 52,
+        "put": 47
       }
     },
     "regimeBeacon": {
@@ -68,13 +68,13 @@
       "id": "hurst",
       "label": "Trend Strength",
       "value": 0.2,
-      "verdict": "Mean-reverting (contrarian works)"
+      "verdict": "Choppy Market - Don't Chase"
     },
     "vixTerm": {
       "id": "vixterm",
       "label": "Volatility Term",
       "value": "Contango",
-      "verdict": "SELL OPTIONS - Collect premium",
+      "verdict": "Normal Market Structure",
       "history": [
         {
           "time": "Spot",
@@ -93,27 +93,27 @@
     "fridayFear": {
       "id": "fear",
       "label": "Weekend Risk",
-      "value": "LOW",
-      "verdict": "Low gap risk - weekend positions acceptable"
+      "value": "MODERATE",
+      "verdict": "Global weakness detects carry risk. (Global -1.06%"
     },
     "thetaDecay": {
       "id": "theta",
       "label": "Time Decay",
       "value": -17.6,
       "unit": "pts/day",
-      "verdict": "SELL THETA - Time decay is high"
+      "verdict": "Sellers Winning (Fast Decay)"
     },
     "monteCarlo": {
       "id": "mc",
       "label": "Prediction (5d)",
       "value": "Stable",
-      "verdict": "1\u03c3: 25663-26505"
+      "verdict": "1\u03c3: 25645-26496"
     },
     "barrierBreach": {
       "id": "barrier",
       "label": "Touch Probability",
-      "value": "100%",
-      "verdict": "\u00b12% touch: Up 100%, Down 100%"
+      "value": "19%",
+      "verdict": "\u00b12% touch: Up 19%, Down 14%"
     },
     "streakReversal": {
       "id": "streak",
@@ -141,9 +141,9 @@
     },
     "gexCluster": {
       "id": "gex",
-      "label": "Support Level",
-      "value": "0.0Bn",
-      "verdict": "WEAK SUPPORT - Can break down"
+      "label": "Key Support (S1)",
+      "value": "25753",
+      "verdict": "Price floor at 25753"
     },
     "eventRadar": {
       "id": "event",
@@ -173,7 +173,11 @@
     "bearishSignals": 1,
     "totalSignals": 7,
     "bullishPct": 85.7,
-    "kellySize": "5%",
-    "disclaimer": "Educational analysis only. Past performance does not guarantee future results. Trade at your own risk."
+    "kellySize": "5%"
+  },
+  "forecast": {
+    "tomorrow": "Gap Down likely (Global Weakness -1.06% overrides Technicals).",
+    "intraday": "Trend Day likely. Buy pullbacks.",
+    "swing": "Hold BULLISH positions. Raise trailing stops."
   }
 }

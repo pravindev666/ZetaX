@@ -75,7 +75,8 @@ export async function fetchMarketDataFromJSON(index: 'NIFTY' | 'BANKNIFTY'): Pro
         fomoMeter: enhanceDataPoint(data.tiles.fomoMeter),
       },
       // Pass through overallVerdict from Python
-      overallVerdict: data.overallVerdict || null
+      overallVerdict: data.overallVerdict || null,
+      forecast: data.forecast || null
     };
   } catch (error) {
     console.error('Error fetching market data:', error);
@@ -309,30 +310,112 @@ export const getMockMarketData = (index: 'NIFTY' | 'BANKNIFTY'): MarketDataState
 
 export const getHelpContent = (id: string): { title: string; description: string; rule: string } => {
   const helpMap: Record<string, { title: string; description: string; rule: string }> = {
-    kelly: {
-      title: 'POSITION SIZING (KELLY)',
-      description: 'Calculates the mathematically optimal percentage of your capital to allocate based on current win probability and risk/reward ratio. Regime-adjusted for market conditions.',
-      rule: 'If > 15%, high-probability edge detected. If < 5%, stay small and preserve capital.'
+    // --- Row 1 ---
+    spot: {
+      title: 'CURRENT LEVEL',
+      description: 'The real-time spot price of the index. Updates every minute during market hours.',
+      rule: 'Compare with Pivot Support/Resistance levels to gauge immediate strength.'
+    },
+    vix: {
+      title: 'INDIA VIX (FEAR GAUGE)',
+      description: 'Measures expected market volatility over the next 30 days. High VIX = High Fear.',
+      rule: 'If VIX < 15, confident trend moves are likely. If > 20, expect sharp, choppy swings.'
+    },
+    probs: {
+      title: 'OPTION SKEW',
+      description: 'Analyzes the cost of Calls vs. Puts. Shows which side "smart money" is paying a premium for.',
+      rule: 'Call Bias > 55% = Bullish. Put Bias > 55% = Bearish. Neutral = No clear edge.'
     },
     regime: {
       title: 'MARKET REGIME (HMM)',
-      description: 'Hidden Markov Model detects current market state: TRENDING (momentum works), MEAN-REVERTING (contrarian works), or CHAOTIC (stay away).',
-      rule: 'Trade WITH the regime. Avoid counter-trend trades in TRENDING, avoid breakout trades in CHAOTIC.'
+      description: 'Hidden Markov Model detects current state: TRENDING (momentum works), MEAN-REVERTING (contrarian works), or CHAOTIC.',
+      rule: 'Trade WITH momentum in Trending. Fade extremes in Mean-Reverting. Stay out in Chaotic.'
+    },
+    kelly: {
+      title: 'KELLY CRITERION',
+      description: 'Mathematically optimal position size based on current win probability and risk/reward.',
+      rule: 'If > 15%, maximize size. If 0%, sit in cash. Never exceed this limit.'
+    },
+
+    // --- Row 2 ---
+    var: {
+      title: 'VALUE AT RISK (VaR)',
+      description: 'Statistical maximum expected loss on a single bad day (95% confidence).',
+      rule: 'If VaR > -2%, risk is normal. If < -3%, extreme volatility risk active.'
+    },
+    hurst: {
+      title: 'HURST EXPONENT',
+      description: 'Measures "memory" of time series. Separates true trends from random walks.',
+      rule: '> 0.6 = Strong Trend (Follow). < 0.4 = Mean Reversion (Fade). 0.5 = Random Noise.'
+    },
+    vixterm: {
+      title: 'VOLATILITY TERM STRUCTURE',
+      description: 'Compares Spot VIX vs 5-day/20-day averages. Contango (Spot < Long) is healthy.',
+      rule: 'Backwardation (Spot > Long) usually signals rising fear and potential bottoms.'
+    },
+    fear: {
+      title: 'FRIDAY FEAR FACTOR',
+      description: 'Quantifies willingness to hold positions over the weekend + Global Sentinel check.',
+      rule: 'CRITICAL: Check at 3:15 PM Friday. If High/Red, exit positions before 3:30 PM close.'
+    },
+    theta: {
+      title: 'THETA DECAY',
+      description: 'Estimated daily option premium erosion based on current VIX levels.',
+      rule: 'High Decay (> 20pts/day) favors Option Sellers. Low Decay favors Buyers.'
+    },
+
+    // --- Row 3 ---
+    mc: {
+      title: 'MONTE CARLO PREDICTION',
+      description: 'Simulates 10,000 future paths using Jump Diffusion to predict 5-day range.',
+      rule: 'Price usually stays within the 1σ bands. Breakout of bands = Strong impulse.'
+    },
+    barrier: {
+      title: 'BARRIER PROBABILITY',
+      description: 'Probability of price touching a +2% or -2% level within 5 days.',
+      rule: 'Calculated using First Passage Time. Higher % = Higher chance of hitting target.'
+    },
+    streak: {
+      title: 'STREAK REVERSAL',
+      description: 'Probability that the current consecutive up/down streak will end tomorrow.',
+      rule: 'If P(Rev) > 60% after a 3+ day streak, look for counter-trend reversal trades.'
+    },
+    pain: {
+      title: 'MAX PAIN / EXPIRY PIN',
+      description: 'The price level where the maximum number of Options contracts expire worthless.',
+      rule: 'On expiry days, price often gravitates towards this "Magnet Level".'
+    },
+    range: {
+      title: 'EXPECTED RANGE',
+      description: 'Projected 5-day movement range based on current volatility dynamics.',
+      rule: 'Use these levels to set broad Stop Loss or Take Profit targets.'
+    },
+
+    // --- Row 4 ---
+    momentum: {
+      title: 'MOMENTUM PULSE',
+      description: 'Composite score of ROC, RSI, and MACD strength.',
+      rule: '> 50 = Positive Momentum. < 50 = Negative. > 80 is Overbought.'
+    },
+    gex: {
+      title: 'GAMMA EXPOSURE / PIVOT',
+      description: 'Key structural level derived from Volume or Pivot Points.',
+      rule: 'Acts as a "Hard Floor" or "Hard Ceiling". Breaks here are significant.'
+    },
+    event: {
+      title: 'EVENT RADAR',
+      description: 'Timer to the next major volatility event (Earnings, Fed, Expiry).',
+      rule: 'Reduce position size 1 hour before major events.'
     },
     traffic: {
       title: 'TRADE TRAFFIC LIGHT',
-      description: 'Weighted score (0-100) combining regime, VIX, and momentum. GO (>70), WAIT (40-70), STOP (<40).',
-      rule: 'GREEN = favorable conditions. YELLOW = reduce size. RED = avoid new trades.'
+      description: 'Weighted Logic: Regime (40%) + VIX (30%) + Momentum (30%).',
+      rule: 'GO = Aggressive Longs. WAIT = Selective. STOP = Cash/Hedge only.'
     },
     fomo: {
-      title: 'FOMO METER',
-      description: 'Measures market emotion using RSI + Bollinger Bands + Volume confirmation. Prevents buying at tops or selling at bottoms.',
-      rule: 'EXTREME GREED (>75) = wait for pullback. EXTREME FEAR (<25) = look for reversal.'
-    },
-    streak: {
-      title: 'STREAK REVERSAL (RF)',
-      description: 'Random Forest model predicts probability of streak reversal. Confidence adjusted for rare long streaks.',
-      rule: 'High reversal probability after 4+ consecutive days = potential reversal zone.'
+      title: 'FOMO / GREED METER',
+      description: 'Sentiment gauge using Price vs Bollinger Bands + Volume.',
+      rule: 'Extreme Greed (>80) often marks tops. Extreme Fear (<20) marks bottoms.'
     }
   };
 

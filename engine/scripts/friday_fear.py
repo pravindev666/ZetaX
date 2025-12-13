@@ -94,7 +94,7 @@ def calculate_friday_gaps(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(gaps)
 
 
-def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None) -> dict:
+def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None, global_sentiment: dict = None) -> dict:
     """
     Calculate Friday Fear Index with expiry week adjustment.
     
@@ -103,6 +103,7 @@ def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None) -> di
     Args:
         df: DataFrame with OHLCV data
         is_current_expiry: Whether current week is expiry week
+        global_sentiment: Global market stance (e.g. {'sentiment': 'BEARISH'})
     
     Returns:
         Dict with gap statistics and risk assessment
@@ -143,7 +144,7 @@ def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None) -> di
     gap_75 = float(np.percentile(active_gaps, 75))
     gap_90 = float(np.percentile(active_gaps, 90))
     
-    # Determine risk level
+    # Determine risk level (Base)
     if gap_90 > 0.02:  # >2% gap at 90th percentile
         risk_level = 'HIGH'
         verdict = 'Significant gap risk - reduce overnight positions'
@@ -154,9 +155,26 @@ def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None) -> di
         risk_level = 'LOW'
         verdict = 'Low gap risk - weekend positions acceptable'
     
+    # Global Adjustment logic
+    global_note = ""
+    if global_sentiment:
+        g_sent = global_sentiment.get('sentiment', 'NEUTRAL')
+        g_change = global_sentiment.get('change_pct', 0)
+        
+        if g_sent == 'BEARISH' and risk_level == 'LOW':
+            risk_level = 'MODERATE'
+            verdict = 'Global weakness detects carry risk.'
+            global_note = f" (Global {g_change}%)"
+        elif g_sent == 'BEARISH' and risk_level == 'MODERATE':
+            risk_level = 'HIGH'
+            verdict = 'Globally bearish. Do not hold longs.'
+            global_note = f" (Global {g_change}%)"
+            
     # Expiry adjustment
     if is_current_expiry:
         verdict = f"[EXPIRY WEEK] {verdict}"
+        
+    verdict += global_note
     
     return {
         'risk_level': risk_level,
@@ -173,18 +191,16 @@ def friday_fear_adjusted(df: pd.DataFrame, is_current_expiry: bool = None) -> di
     }
 
 
-def get_friday_fear(df: pd.DataFrame, spot_price: float) -> dict:
+def get_friday_fear(df: pd.DataFrame, spot_price: float, global_sentiment: dict = None) -> dict:
     """
     Get Friday Fear index with point values.
     
     Args:
         df: DataFrame with OHLCV data
         spot_price: Current spot price
-    
-    Returns:
-        Dict with complete Friday Fear analysis
+        global_sentiment: Optional global market sentiment dict
     """
-    result = friday_fear_adjusted(df)
+    result = friday_fear_adjusted(df, global_sentiment=global_sentiment)
     
     # Add point values
     result['gap_50_pts'] = result['gap_50'] * spot_price

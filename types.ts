@@ -63,6 +63,11 @@ export interface MarketDataState {
     kellySize: string;
     disclaimer: string;
   };
+  forecast?: {
+    tomorrow: string;
+    intraday: string;
+    swing: string;
+  };
 }
 
 export interface TileHelpContent {

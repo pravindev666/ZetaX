@@ -56,7 +56,7 @@ export const GlassTile: React.FC<GlassTileProps> = ({
       className={`
         relative flex flex-col justify-between 
         bg-surface/90 backdrop-blur-sm 
-        border border-border
+        border border-border shadow-lg
         rounded-sm overflow-hidden 
         group transition-all duration-300 
         hover:scale-[1.02] hover:z-10
@@ -213,8 +213,8 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({ options, sel
         key={opt}
         onClick={() => onChange(opt)}
         className={`px-4 py-2 text-sm font-mono font-bold transition-all duration-300 rounded-sm ${selected === opt
-            ? 'bg-cyan-500/10 text-cyan-500 border border-cyan-500/50 shadow-[0_0_10px_rgba(0,243,255,0.2)]'
-            : 'text-text-muted hover:text-text-main hover:bg-surface'
+          ? 'bg-cyan-500/10 text-cyan-500 border border-cyan-500/50 shadow-[0_0_10px_rgba(0,243,255,0.2)]'
+          : 'text-text-muted hover:text-text-main hover:bg-surface'
           }`}
       >
         {opt}
