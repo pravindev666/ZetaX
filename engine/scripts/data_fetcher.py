@@ -5,6 +5,7 @@ Fetches NIFTY, BANKNIFTY, and India VIX data from yfinance
 """
 
 import os
+import time
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
@@ -103,10 +104,12 @@ def fetch_all_training_data() -> tuple:
     # Fetch and save NIFTY
     nifty = fetch_historical_data("^NSEI", "2005-01-01")
     nifty.to_csv(nifty_path)
+    time.sleep(2)  # Rate limit
     
     # Fetch and save BANKNIFTY
     banknifty = fetch_historical_data("^NSEBANK", "2005-01-01")
     banknifty.to_csv(banknifty_path)
+    time.sleep(2)  # Rate limit
     
     # Fetch and save VIX (available from 2008)
     vix = fetch_historical_data("^INDIAVIX", "2008-01-01")
@@ -143,7 +146,9 @@ def fetch_inference_data(index: str = 'NIFTY') -> tuple:
     symbol = "^NSEI" if index == 'NIFTY' else "^NSEBANK"
     
     index_df = fetch_recent_data(symbol, "1y")
+    time.sleep(2)  # Rate limit
     vix = fetch_recent_data("^INDIAVIX", "1y")
+    time.sleep(2)  # Rate limit
     live_price = get_live_price(symbol)
     
     return index_df, vix, live_price

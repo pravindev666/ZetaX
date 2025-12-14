@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Maximize2, Info, Moon, Sun, AlertTriangle, Radio, Shield, FileText, Lock, HelpCircle, Diamond } from 'lucide-react';
+import { RefreshCw, Maximize2, Info, Moon, Sun, AlertTriangle, Shield, FileText, Lock, HelpCircle, Diamond } from 'lucide-react';
 import { getMarketData, getHelpContent, getMarketDataAsync } from './services/marketData';
 import { MarketDataState, DataPoint } from './types';
 import { GlassTile, Modal, SegmentedControl, StatusDot } from './components/ui';
@@ -109,7 +109,7 @@ const CookiePreferences = ({ onBack }: { onBack: () => void }) => (
       <section>
         <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Consent Management</h2>
         <p>We provide a consent banner to manage your preferences. Your choices are stored locally in your browser and will persist until you change them or clear your browser data.</p>
-        <button className="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-sm font-bold text-sm transition-colors" onClick={() => localStorage.removeItem('rubix_cookie_consent') || window.location.reload()}>Reset / Open Cookie Settings</button>
+        <button className="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-sm font-bold text-sm transition-colors" onClick={() => { localStorage.removeItem('rubix_cookie_consent'); window.location.reload(); }}>Reset / Open Cookie Settings</button>
       </section>
       <section>
         <h2 className="text-xl font-header font-bold text-cyan-500 mb-2">Third Parties</h2>
@@ -362,6 +362,8 @@ export default function App() {
     </div>
   );
 
+
+
   return (
     <div className="min-h-screen font-sans selection:bg-cyan-500/30 pb-20 relative transition-colors duration-300">
 
@@ -547,11 +549,12 @@ export default function App() {
         <section className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Main Verdict Tile */}
           <div className="xl:col-span-2 bg-gradient-to-r from-surface to-background border border-border p-8 rounded-sm relative overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-lg">
-            <div className="absolute top-0 right-0 p-4 opacity-5 dark:opacity-10 pointer-events-none">
-              <Radio size={120} className="text-text-main" />
-            </div>
+
             <div className="relative z-10">
-              <h2 className="text-sm font-mono text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-[0.2em] mb-3">AI Consensus</h2>
+              <div className="flex justify-between items-start mb-3">
+                <h2 className="text-sm font-mono text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-[0.2em]">AI Consensus</h2>
+
+              </div>
               <div className="text-4xl md:text-5xl font-header font-black text-text-main mb-4 leading-tight shadow-black drop-shadow-xl">
                 {data.hero.verdictTitle}
               </div>
@@ -885,6 +888,44 @@ export default function App() {
 
           </div>
         )}
+
+        {/* Other Products Section */}
+        <div className="mt-12 py-8 border-t border-border">
+          <h2 className="text-2xl font-header font-bold text-center mb-8 tracking-widest uppercase">
+            Check out Our Other <span className="text-cyan-500">Products</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <a href="https://tradyxa-alephx.pages.dev/" target="_blank" rel="noopener noreferrer" className="bg-surface/50 border border-border p-5 rounded-sm hover:border-cyan-500 hover:bg-surface hover:-translate-y-1 transition-all group group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-2 h-2 bg-cyan-500 rounded-bl-sm opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <h3 className="font-header font-bold text-lg text-cyan-400 mb-2 truncate">Tradyxa Quant Dashboard</h3>
+              <p className="text-xs text-text-muted mb-3 font-mono">AI-Driven NIFTY Options Prediction Lab</p>
+              <p className="text-xs text-text-main line-clamp-3">Next-Day Forecasts, Volatility Analysis, and Quantitative ML Models.</p>
+            </a>
+
+            <a href="https://tradyxa-betax.pages.dev/" target="_blank" rel="noopener noreferrer" className="bg-surface/50 border border-border p-5 rounded-sm hover:border-purple-500 hover:bg-surface hover:-translate-y-1 transition-all group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-2 h-2 bg-purple-500 rounded-bl-sm opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <h3 className="font-header font-bold text-lg text-purple-400 mb-2 truncate">Tradyxa Aegis Matrix</h3>
+              <p className="text-xs text-text-muted mb-3 font-mono">Options Intelligence System</p>
+              <p className="text-xs text-text-main line-clamp-3">NIFTY Options Intelligence System Using Trained ML Models.</p>
+            </a>
+
+            <a href="https://tradyxa-gammax.pages.dev/" target="_blank" rel="noopener noreferrer" className="bg-surface/50 border border-border p-5 rounded-sm hover:border-yellow-500 hover:bg-surface hover:-translate-y-1 transition-all group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-2 h-2 bg-yellow-500 rounded-bl-sm opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <h3 className="font-header font-bold text-lg text-yellow-400 mb-2 truncate">Tradyxa Aztryx</h3>
+              <p className="text-xs text-text-muted mb-3 font-mono">Stocks Intelligence</p>
+              <p className="text-xs text-text-main line-clamp-3">Trained ML models for next-day index moves, slippage forecasting and execution guidance.</p>
+            </a>
+
+            <a href="https://tradyxa-deltax.pages.dev/" target="_blank" rel="noopener noreferrer" className="bg-surface/50 border border-border p-5 rounded-sm hover:border-green-500 hover:bg-surface hover:-translate-y-1 transition-all group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-bl-sm opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <h3 className="font-header font-bold text-lg text-green-400 mb-2 truncate">Tradyxa AuztinX</h3>
+              <p className="text-xs text-text-muted mb-3 font-mono">Decision Engine</p>
+              <p className="text-xs text-text-main line-clamp-3">NIFTY & BANKNIFTY Decision Engine.</p>
+            </a>
+
+          </div>
+        </div>
 
         {/* Footer */}
         <footer className="text-xs text-text-muted font-mono py-8 border-t border-border mt-8 flex flex-col gap-6">
